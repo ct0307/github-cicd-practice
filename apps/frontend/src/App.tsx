@@ -57,7 +57,7 @@ export default function App() {
         </dl>
         <p>GitHub Pages 仅提供静态页面。未部署后端时，请求接口会显示失败。</p>
       </section>
-      <footer>实验版本 1.0.1 · ECS 自动部署验证 · React / Vite / Express</footer>
+      <footer>实验版本 1.0.2 · 第二次自动更新验证 · React / Vite / Express</footer>
     </main>
   );
 }
