@@ -16,7 +16,7 @@
     "build": "node scripts/check-static.mjs && npm run build --workspaces",
     "dev:backend": "npm run dev --workspace @cicd/backend",
     "dev:frontend": "npm run dev --workspace @cicd/frontend",
-    "check:static": "node scripts/check-static.mjs missing-static"
+    "check:static": "node scripts/check-static.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
