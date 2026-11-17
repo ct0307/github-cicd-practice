@@ -1,0 +1,72 @@
+name: Build and Deploy Full Stack to ECS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecs-production
+  cancel-in-progress: false
+
+jobs:
+  build-test-deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 拉取本次提交
+        uses: actions/checkout@v4
+      - name: 配置 Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: 安装锁定依赖
+        run: npm ci --ignore-scripts
+      - name: 校验静态入口和代码
+        run: |
+          npm run check:static
+          npm run lint
+      - name: 测试前后端及编译产物
+        run: npm test
+      - name: 构建前后端
+        run: npm run build
+      - name: 生成独立发布包
+        run: npm run release -- "$GITHUB_SHA"
+      - name: 保存可追溯制品
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecs-${{ github.sha }}
+          path: release/${{ github.sha }}
+          retention-days: 7
+          if-no-files-found: error
+      - name: 上传制品并执行健康检查及回滚
+        env:
+          ECS_HOST: ${{ secrets.ECS_HOST }}
+          ECS_USER: ${{ secrets.ECS_USER }}
+          DEPLOY_KEY: ${{ secrets.ECS_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.ECS_SSH_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$ECS_HOST" =~ ^[0-9.]+$ && "$ECS_USER" == deploy ]]
+          [[ -n "$DEPLOY_KEY" && -n "$KNOWN_HOSTS" ]]
+          umask 077
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/cicd_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH_OPTIONS="-i $HOME/.ssh/cicd_key -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15"
+          ssh $SSH_OPTIONS "$ECS_USER@$ECS_HOST" "mkdir -p /srv/cicd-demo/releases/$GITHUB_SHA"
+          rsync -az -e "ssh $SSH_OPTIONS" "release/$GITHUB_SHA/" "$ECS_USER@$ECS_HOST:/srv/cicd-demo/releases/$GITHUB_SHA/"
+          ssh $SSH_OPTIONS "$ECS_USER@$ECS_HOST" "bash -s -- $GITHUB_SHA" < deploy/activate.sh
+      - name: 验证公网接口
+        env:
+          ECS_HOST: ${{ secrets.ECS_HOST }}
+        run: |
+          test "$(curl -fsS --max-time 15 "http://$ECS_HOST/health")" = ok
+          test "$(curl -fsS --max-time 15 "http://$ECS_HOST/api/version")" = "$GITHUB_SHA"
+          curl -fsS --max-time 15 "http://$ECS_HOST/api/hello"

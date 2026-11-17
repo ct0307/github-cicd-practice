@@ -3,20 +3,27 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": ["apps/backend", "apps/frontend"],
-  "engines": { "node": ">=22.12.0" },
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "test": "node --test test/static.test.mjs && npm test --workspaces",
+    "test": "npm run build --workspaces && node --test test/*.test.mjs && npm test --workspaces",
     "build": "node scripts/check-static.mjs && npm run build --workspaces",
     "dev:backend": "npm run dev --workspace @cicd/backend",
     "dev:frontend": "npm run dev --workspace @cicd/frontend",
-    "check:static": "node scripts/check-static.mjs"
+    "check:static": "node scripts/check-static.mjs",
+    "release": "node scripts/make-release.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

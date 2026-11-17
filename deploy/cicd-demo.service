@@ -1,0 +1,22 @@
+[Unit]
+Description=CI/CD 实验后端
+After=network.target
+
+[Service]
+Type=simple
+User=cicdapp
+Group=cicdapp
+WorkingDirectory=/srv/cicd-demo/current/backend
+Environment=NODE_ENV=production
+EnvironmentFile=/srv/cicd-demo/current/backend/release.env
+ExecStart=/usr/local/bin/node dist/server.js
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

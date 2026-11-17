@@ -65,3 +65,9 @@ npm audit
 GitHub Pages 不运行 Node 后端，线上 React 页面未接入后端托管时会如实显示接口请求失败。Heroku 部署需要另外提供账号、应用和授权；本项目不默认开通付费资源。实验四不包含在本次交付范围内。
 
 如果需要在 Heroku 部署后端，请使用 `HOST=0.0.0.0`，并由平台提供 `PORT`，启动 `npm start --workspace @cicd/backend`。
+# 实验四补充
+
+后端新增 TypeScript 入口，`npm run build` 生成 `apps/backend/dist/server.js`。`npm test` 包含编译后真实 HTTP 测试和独立发布包测试。
+
+ECS 通过 `.github/workflows/deploy-ecs.yml` 自动发布，具体初始化、Secrets、健康检查及回滚说明见 [deploy/README.md](deploy/README.md)。根工作区只维护一份安装锁文件，发布包从该锁提取后端生产依赖并生成独立锁文件。
+

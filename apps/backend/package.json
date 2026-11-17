@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/start.js",
-    "start": "node src/start.js",
+    "start": "node dist/server.js",
     "lint": "eslint src test --max-warnings 0",
-    "test": "node --test test/server.test.js",
-    "build": "node --check src/server.js && node --check src/start.js"
+    "test": "npm run build && node --test test/server.test.js test/compiled.test.mjs",
+    "build": "tsc -p tsconfig.json"
   },
   "dependencies": { "express": "^5.3.0" }
 }

@@ -1,5 +1,7 @@
 node_modules/
 apps/frontend/dist/
+apps/backend/dist/
+release/
 site/
 coverage/
 .env
