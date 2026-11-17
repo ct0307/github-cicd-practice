@@ -3,15 +3,20 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": ["apps/backend", "apps/frontend"],
-  "engines": { "node": ">=22.12.0" },
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "test": "node --test test/static.test.mjs && npm test --workspaces",
     "build": "node scripts/check-static.mjs && npm run build --workspaces",
     "dev:backend": "npm run dev --workspace @cicd/backend",
     "dev:frontend": "npm run dev --workspace @cicd/frontend",
-    "check:static": "node scripts/check-static.mjs"
+    "check:static": "node scripts/check-static.mjs missing-static"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
