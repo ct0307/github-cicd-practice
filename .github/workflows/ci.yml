@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: 安装锁定依赖
+        run: npm ci --ignore-scripts
+      - name: 校验静态入口
+        run: npm run check:static
+      - name: 执行代码检查
+        run: npm run lint
+      - name: 执行前后端测试
+        run: npm test
+      - name: 构建前后端
+        run: npm run build
+      - name: 保存前端构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: apps/frontend/dist
+          if-no-files-found: error

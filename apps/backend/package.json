@@ -1,0 +1,14 @@
+{
+  "name": "@cicd/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/start.js",
+    "start": "node src/start.js",
+    "lint": "eslint src test --max-warnings 0",
+    "test": "node --test test/server.test.js",
+    "build": "node --check src/server.js && node --check src/start.js"
+  },
+  "dependencies": { "express": "^5.3.0" }
+}

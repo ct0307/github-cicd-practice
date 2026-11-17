@@ -1,0 +1,14 @@
+{
+  "name": "@cicd/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "lint": "eslint src --max-warnings 0",
+    "test": "vitest run",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
+  },
+  "dependencies": { "react": "^19.3.1", "react-dom": "^19.3.1" }
+}

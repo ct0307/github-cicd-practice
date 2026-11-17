@@ -1,0 +1,22 @@
+name: Hello World CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+      - name: 打印问候语
+        run: echo 'Hello World!'
+      - name: 显示日期
+        run: date
+      - name: 列出目录内容
+        run: ls -l
